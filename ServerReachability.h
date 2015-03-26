@@ -38,10 +38,12 @@ typedef void(^serverReachabilityCompletion)(BOOL isReachable);
 
 @interface ServerReachability : NSObject
 
-+ (instancetype) sharedReachability;
+@property (nonatomic, readonly) BOOL isReachable;
 
-- (void) startMonitoringForServer:(NSString *)serverURL;
++ (instancetype) reachabilityWithServer:(NSString *)serverUrl;
 
-- (void) checkConnectionToServerWithCompletion:(serverReachabilityCompletion) completion;
+- (instancetype) initWithServer:(NSString *)serverUrl;
+
+- (void) resetReachabilityStatus;
 
 @end

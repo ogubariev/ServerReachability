@@ -23,8 +23,9 @@
 }
 
 - (IBAction)checkConnectionButtonTapped:(id)sender {
-    [[ServerReachability sharedReachability] startMonitoringForServer:self.urlTextField.text];
-    [[ServerReachability sharedReachability] checkConnectionToServerWithCompletion:^(BOOL isReachable) {
+    ServerReachability *serverReachability = [ServerReachability reachabilityWithServer:self.urlTextField.text];
+    
+    [serverReachability checkConnectionToServerWithCompletion:^(BOOL isReachable) {
         self.statusLabel.text = isReachable ? @"Success" : @"Failed";
     }];
 }

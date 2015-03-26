@@ -43,41 +43,43 @@ const __darwin_time_t kServerReachabilityTimeoutInterval = 3;
 bool connect_w_to(struct addrinfo *serverInfo, int timeout);
 
 @interface ServerReachability ()
-@property (nonatomic, strong) NSNumber *isReachable;
+@property (nonatomic, strong) NSNumber *isReachableChecked;
 @property (nonatomic, strong) NSString *serverUrl;
 @end
 
 @implementation ServerReachability
 
-+ (instancetype)sharedReachability {
-    static ServerReachability *_serverReachability;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        _serverReachability = [self new];
-    });
-    
-    return _serverReachability;
+@dynamic isReachable;
+
++ (instancetype)reachabilityWithServer:(NSString *)serverUrl {
+    return [[ServerReachability alloc] initWithServer:serverUrl];
 }
 
-- (void)startMonitoringForServer:(NSString *)serverURL {
-    self.serverUrl = serverURL;
-    self.isReachable = nil;
-}
-
-- (void) checkConnectionToServerWithCompletion:(serverReachabilityCompletion) completion {
-    if (!self.isReachable) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            self.isReachable = [NSNumber numberWithBool:[self checkConnectionToServer:self.serverUrl]];
-            if (completion) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completion(self.isReachable.boolValue);
-                });
-            }
-        });
-    } else if (completion) {
-        completion(self.isReachable.boolValue);
+- (instancetype)initWithServer:(NSString *)serverUrl{
+    self = [super init];
+    if (self) {
+        self.serverUrl = serverUrl;
+        self.isReachableChecked = nil;
     }
+    return self;
 }
+
+- (BOOL)isReachable {
+    if (!self.isReachableChecked) {
+        dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            self.isReachableChecked = [NSNumber numberWithBool:[self checkConnectionToServer:self.serverUrl]];
+            dispatch_semaphore_signal(sem);
+        });
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    return self.isReachableChecked.boolValue;
+}
+
+- (void) resetReachabilityStatus {
+    self.isReachableChecked = nil;
+}
+
 
 - (BOOL)checkConnectionToServer:(NSString *)serverUrl {
     NSURL *url = [NSURL URLWithString:serverUrl];
