@@ -29,6 +29,8 @@
  * Created by Alexey Gubarev on 3/25/15.
  * <gubarev.lesha@gmail.com>
  * Copyright (c) 2015, Alexey Gubarev. All rights reserved.
+ *
+ * v0.0.1
  */
 
 
@@ -36,14 +38,48 @@
 
 typedef void(^serverReachabilityCompletion)(BOOL isReachable);
 
+/**
+ Provides methods which check connection to server by url.
+ 
+ @author Alexey Gubarev <gubarev.lesha@gmail.com>
+ 
+ @since 0.0.1
+ */
+
 @interface ServerReachability : NSObject
 
+/**
+ Reachability status. It will be defined after trying connect to server.
+ 
+ @since 0.0.1
+ */
 @property (nonatomic, readonly) BOOL isReachable;
 
+/**
+ Returns a server reachability instance.
+ 
+ @param serverUrl The server url for checking reachability to it
+ @return A server reachability instance
+
+ @since 0.0.1
+ */
 + (instancetype) reachabilityWithServer:(NSString *)serverUrl;
 
+/**
+ Returns a server reachability instance.
+ 
+ @param serverUrl The server url for checking reachability to it
+ @return A server reachability instance
+ 
+ @since 0.0.1
+ */
 - (instancetype) initWithServer:(NSString *)serverUrl;
 
+/**
+ Reset reachability status.
+ 
+ @since 0.0.1
+ */
 - (void) resetReachabilityStatus;
 
 @end
