@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 	s.name = "ServerReachability"
-	s.version = "0.0.1"
+	s.version = "0.0.2"
 	s.summary = "ServerReachability - This class help you with checking of access to server by host and port."
 	s.license = { :type => "MIT", :file => "LICENSE" }
 	s.author = { "Alexey Gubarev" => "gubarev.lesha@gmail.com" }

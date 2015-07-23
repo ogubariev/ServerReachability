@@ -45,6 +45,8 @@ bool connect_w_to(struct addrinfo *serverInfo, int timeout);
 @interface ServerReachability ()
 @property (nonatomic, strong) NSNumber *isReachableChecked;
 @property (nonatomic, strong) NSString *serverUrl;
+@property (nonatomic, assign) int timeout;
+
 @end
 
 @implementation ServerReachability
@@ -52,12 +54,21 @@ bool connect_w_to(struct addrinfo *serverInfo, int timeout);
 @dynamic isReachable;
 
 + (instancetype)reachabilityWithServer:(NSString *)serverUrl {
-    return [[ServerReachability alloc] initWithServer:serverUrl];
+    return [[ServerReachability alloc] initWithServer:serverUrl timeout:kServerReachabilityTimeoutInterval];
 }
 
 - (instancetype)initWithServer:(NSString *)serverUrl{
+    return [self initWithServer:serverUrl timeout:kServerReachabilityTimeoutInterval];
+}
+
++ (instancetype) reachabilityWithServer:(NSString *)serverUrl timeout:(NSTimeInterval)timeout{
+    return [[ServerReachability alloc] initWithServer:serverUrl timeout:kServerReachabilityTimeoutInterval];
+}
+
+- (instancetype) initWithServer:(NSString *)serverUrl timeout:(NSTimeInterval)timeout{
     self = [super init];
     if (self) {
+        self.timeout = timeout;
         self.serverUrl = serverUrl;
         self.isReachableChecked = nil;
     }
@@ -113,7 +124,7 @@ bool connect_w_to(struct addrinfo *serverInfo, int timeout);
                     printf("Official name is: %s\n", p->ai_canonname);
                 }
                 // Try connect to current server info
-                if (connect_w_to(p, kServerReachabilityTimeoutInterval)) {
+                if (connect_w_to(p, self.timeout)) {
                     status = YES;
                     break;
                 }

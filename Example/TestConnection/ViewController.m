@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "ServerReachability.h"
 
-@interface ViewController ()
+@interface ViewController () <UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *urlTextField;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 
@@ -25,9 +25,13 @@
 - (IBAction)checkConnectionButtonTapped:(id)sender {
     ServerReachability *serverReachability = [ServerReachability reachabilityWithServer:self.urlTextField.text];
     
-    [serverReachability checkConnectionToServerWithCompletion:^(BOOL isReachable) {
-        self.statusLabel.text = isReachable ? @"Success" : @"Failed";
-    }];
+    self.statusLabel.text = serverReachability.isReachable ? @"Success" : @"Failed";
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    return NO;
 }
 
 @end

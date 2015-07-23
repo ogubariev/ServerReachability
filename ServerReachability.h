@@ -75,6 +75,29 @@ typedef void(^serverReachabilityCompletion)(BOOL isReachable);
  */
 - (instancetype) initWithServer:(NSString *)serverUrl;
 
+
+/**
+ Returns a server reachability instance.
+ 
+ @param serverUrl The server url for checking reachability to it
+ @param timeout The waiting timeout for checking reachability to server
+ @return A server reachability instance
+ 
+ @since 0.0.2
+ */
++ (instancetype) reachabilityWithServer:(NSString *)serverUrl timeout:(NSTimeInterval)timeout;
+
+/**
+ Returns a server reachability instance.
+ 
+ @param serverUrl The server url for checking reachability to it
+ @param timeout The waiting timeout for checking reachability to server
+ @return A server reachability instance
+ 
+ @since 0.0.2
+ */
+- (instancetype) initWithServer:(NSString *)serverUrl timeout:(NSTimeInterval)timeout;
+
 /**
  Reset reachability status.
  
